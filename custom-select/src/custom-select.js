@@ -3,30 +3,25 @@ export class CustomSelect {
         this.id = id;
         this.data = data;
         this.inputElement = null;
+        this.buttonElement = null;
+        this.listElement = null;
     }
 
-    createCustomSelect = () => {
+    static createCustomSelect = () => {
         
         let getMainDivById = document.getElementById(`${this.id}`);
         getMainDivById.innerHTML = this.createCustomHtml();
-        let getSpanByTag = getMainDivById.firstElementChild.firstElementChild;
-        let listCountriesByTag = getMainDivById.lastElementChild;
+        this.buttonElement = getMainDivById.querySelector('button');
         this.inputElement = getMainDivById.querySelector('input');
+        this.listElement = getMainDivById.querySelector('ul');
+        this.buttonElement.addEventListener('click', this.showAndHideClieckHandler)
+        this.listElement.addEventListener('click', this.listItemClickHandler)
+    }
 
-        getSpanByTag.addEventListener('click', () => {
-            if (listCountriesByTag.style.display=="block")
-            {
-                getSpanByTag.innerText = 'Show'
-                listCountriesByTag.style.display="none"
-            } else {
-                getSpanByTag.innerText = 'Hide'
-                listCountriesByTag.style.display="block"
-            }
-           
-        })
+ 
 
-        listCountriesByTag.addEventListener('click', this.listItemClickHandler)
-       
+    showAndHideClieckHandler = (e) => {
+        this.listElement.classList.toggle("hidden")
     }
 
     listItemClickHandler = (e) => {
@@ -43,10 +38,10 @@ export class CustomSelect {
 
     createCustomHtml = () => {
         return `<div>
-                    <button>Show</button>
+                    <button>Button</button>
                     <input type="text" disable placeholder="Select country" readonly>
                 </div>
-                <ul style='display: none;'>
+                <ul class="hidden">
                     ${this.addUnordertList().join('')}
                 </ul>`
                 
