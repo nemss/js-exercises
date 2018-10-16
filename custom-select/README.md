@@ -3,4 +3,4 @@
 
 ## Documentation
 
-* Create a div element with a class 'custom-select'
+* Create a div element with a class `custom-select`
