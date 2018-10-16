@@ -9,8 +9,14 @@ Http.getData(URL)
     .then(responseDate => {
         const countriesData = responseDate.countries.country;
         listCountriesData = countriesData.map(element => {return new CountryData(element.countryName, element.capital)});
-        let createCustomSelect = CustomSelect('custom-select', listCountriesData).createCustomSelect();
-        //createCustomSelect.createCustomSelect();
+        // let createCustomSelect = new CustomSelect('custom-select' ,listCountriesData);
+        // createCustomSelect.createCustomSelect();
+        factorySelect('custom-select', listCountriesData);
+        factorySelect('custom-select1', listCountriesData);
     })
     .catch(error => console.log(error));
-    
+
+    function factorySelect(id, data) {
+        let select = new CustomSelect(id, data);
+        return select.createCustomSelect();
+    }
