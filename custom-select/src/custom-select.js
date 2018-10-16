@@ -2,29 +2,39 @@ export class CustomSelect {
     constructor(id, data) {
         this.id = id;
         this.data = data;
+        this.inputElement = null;
     }
 
     createCustomSelect = () => {
         
         let getMainDivById = document.getElementById(`${this.id}`);
         getMainDivById.innerHTML = this.createCustomHtml();
-        let getSpanById = getMainDivById.querySelector('#arrow');
-        let listCountriesById = getMainDivById.querySelector('#show-countries');
+        let getSpanByTag = getMainDivById.firstElementChild.firstElementChild;
+        let listCountriesByTag = getMainDivById.lastElementChild;
+        this.inputElement = getMainDivById.querySelector('input');
 
-        listCountriesById.addEventListener('click', (event) => {
-        getMainDivById.querySelector('#input').value = event.target.innerHTML;
-        })
-        getSpanById.addEventListener('click', () => {
-            if (listCountriesById.style.display=="block")
+        getSpanByTag.addEventListener('click', () => {
+            if (listCountriesByTag.style.display=="block")
             {
-                getSpanById.innerText = 'Show'
-                listCountriesById.style.display="none"
+                getSpanByTag.innerText = 'Show'
+                listCountriesByTag.style.display="none"
             } else {
-                getSpanById.innerText = 'Hide'
-                listCountriesById.style.display="block"
+                getSpanByTag.innerText = 'Hide'
+                listCountriesByTag.style.display="block"
             }
            
         })
+
+        listCountriesByTag.addEventListener('click', this.listItemClickHandler)
+       
+    }
+
+    listItemClickHandler = (e) => {
+        this.changeInputValue(e.target.innerHTML);
+    }
+
+    changeInputValue = (newValue) => {
+        this.inputElement.value = newValue
     }
 
     addUnordertList = () => {
@@ -33,10 +43,10 @@ export class CustomSelect {
 
     createCustomHtml = () => {
         return `<div>
-                    <span id="arrow">Show</span>
-                    <input type="text" disable placeholder="Select country" id='input' readonly>
+                    <button>Show</button>
+                    <input type="text" disable placeholder="Select country" readonly>
                 </div>
-                <ul id="show-countries" style='display: none;'>
+                <ul style='display: none;'>
                     ${this.addUnordertList().join('')}
                 </ul>`
                 
