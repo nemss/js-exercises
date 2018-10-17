@@ -1,22 +1,18 @@
-import {Http} from './http';
-import {CountryData} from './country-data';
 import {CustomSelect} from './custom-select';
 
-const URL = 'https://commasense.tech/countries.json';
-let listCountriesData = [];
+document.addEventListener('DOMContentLoaded', factorySelect)
 
-Http.getData(URL)
-    .then(responseDate => {
-        const countriesData = responseDate.countries.country;
-        listCountriesData = countriesData.map(element => {return new CountryData(element.countryName, element.capital)});
-        // let createCustomSelect = new CustomSelect('custom-select' ,listCountriesData);
-        // createCustomSelect.createCustomSelect();
-        factorySelect('custom-select', listCountriesData);
-        factorySelect('custom-select1', listCountriesData);
+
+function factorySelect() {
+    const customSelectClass = '.custom-select';
+    let getAllCustomSelect = document.querySelectorAll(`${customSelectClass}`);
+    getAllCustomSelect.forEach((el, i) => {
+        let dataAttribute = el.getAttribute("data-source");
+        if(!!dataAttribute) {
+            let select = new CustomSelect(el , dataAttribute.trim());
+            select.getDataFromServer();
+        } else {
+            alert(`Custom select ${i} doesn't have data provided!`)
+        }
     })
-    .catch(error => console.log(error));
-
-    function factorySelect(id, data) {
-        let select = new CustomSelect(id, data);
-        return select.createCustomSelect();
-    }
+}

@@ -1,20 +1,23 @@
+import {Http} from './http';
+import {CountryData} from './country-data';
+
 export class CustomSelect {
-    constructor(id ,data) {
-        this.id = id;
-        this.data = data;
+    constructor(container ,dataUrl) {
+        this.container = container;
+        this.dataUrl = dataUrl;
     }
 
-    inputElement = null;
+    elementClass = '.custom-select'
+    inputElement = null
     buttonElement = null;
     listElement = null;
+    data = [];
 
     createCustomSelect = () => {    
-        
-        let getMainDivById = document.getElementById(`${this.id}`);
-        getMainDivById.innerHTML = this.createCustomHtml();
-        this.buttonElement = getMainDivById.querySelector('button');
-        this.inputElement = getMainDivById.querySelector('input');
-        this.listElement = getMainDivById.querySelector('ul');
+        this.container.innerHTML = this.createCustomHtml();
+        this.buttonElement = this.container.querySelector('button');
+        this.inputElement = this.container.querySelector('input');
+        this.listElement = this.container.querySelector('ul');
         this.buttonElement.addEventListener('click', this.showAndHideClieckHandler)
         this.listElement.addEventListener('click', this.listItemClickHandler)
     }
@@ -29,6 +32,16 @@ export class CustomSelect {
 
     changeInputValue = (newValue) => {
         this.inputElement.value = newValue
+    }
+
+    getDataFromServer = () => {
+        Http.getData(this.dataUrl)
+        .then(responseDate => {
+            const countriesData = responseDate.countries.country;
+            this.data = countriesData.map(element => {return new CountryData(element.countryName, element.capital)});
+            this.createCustomSelect();
+        })
+        .catch(error => console.log(error)); 
     }
 
     addUnordertList = () => {
