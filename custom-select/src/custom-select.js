@@ -40,8 +40,10 @@ export class CustomSelect {
         this.container.innerHTML = this.createHtmlForJson();
         this.repeatElements();  
         this.inputElement = this.container.querySelector('input');
-        this.labelElement.textContent = this.dataDefaultLabel;
-        this.inputElement.value = this.dataDefaultValue;
+        if(this.dataDefaultLabel != null) {
+            this.labelElement.textContent = this.dataDefaultLabel;
+            this.inputElement.value = this.dataDefaultValue;
+        }
     }
 
     createElementForSelect = () => {
@@ -75,15 +77,14 @@ export class CustomSelect {
         .then(responseDate => {
             let dataValue = this.container.getAttribute('data-value'),
                 dataLabel = this.container.getAttribute('data-label');
-            this.dataDefaultLabel = this.container.getAttribute('data-default-label');
-            if(this.dataDefaultLabel != "") {
-            this.data = responseDate.map(element => { return {value: element[`${dataValue}`], label: element[`${dataLabel}`]}});
-            this.dataDefaultValue = this.data.find(e => e.label === `${this.dataDefaultLabel}`).value;
+                this.data = responseDate.map(element => { return {value: element[`${dataValue}`], label: element[`${dataLabel}`]}});
+            if(this.container.hasAttribute('data-default-label') && this.container.getAttribute('data-default-label').length > 0) {
+                this.dataDefaultLabel = this.container.getAttribute('data-default-label');
+                this.dataDefaultValue = this.data.find(e => e.label === `${this.dataDefaultLabel}`).value;
             }
-           
             this.createCustomSelect();
         })
-        .catch(error => alert(error)); 
+        .catch(error => console.log(error)); 
     }
 
     addUnordertList = () => {
