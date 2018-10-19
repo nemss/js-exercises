@@ -38,8 +38,10 @@ export class CustomSelect {
 
     createElementForJson = () => {
         this.container.innerHTML = this.createHtmlForJson();
-        this.repeatElements();
+        this.repeatElements();  
         this.inputElement = this.container.querySelector('input');
+        this.labelElement.textContent = this.dataDefaultLabel;
+        this.inputElement.value = this.dataDefaultValue;
     }
 
     createElementForSelect = () => {
@@ -74,8 +76,11 @@ export class CustomSelect {
             let dataValue = this.container.getAttribute('data-value'),
                 dataLabel = this.container.getAttribute('data-label');
             this.dataDefaultLabel = this.container.getAttribute('data-default-label');
+            if(this.dataDefaultLabel != "") {
             this.data = responseDate.map(element => { return {value: element[`${dataValue}`], label: element[`${dataLabel}`]}});
             this.dataDefaultValue = this.data.find(e => e.label === `${this.dataDefaultLabel}`).value;
+            }
+           
             this.createCustomSelect();
         })
         .catch(error => alert(error)); 
