@@ -24,11 +24,15 @@ export class CustomSelect {
             this.createElementForJson();
         }
 
-        this.buttonElement.addEventListener('click', this.showAndHideClieckHandler)
+        this.initialEventListener();
+    }
+
+    initialEventListener = () => {
+        this.buttonElement.addEventListener('click', this.showAndHideClickHandler)
         this.listElement.addEventListener('click', this.listItemClickHandler)
     }
 
-    showAndHideClieckHandler = (e) => {
+    showAndHideClickHandler = (e) => {
         this.listElement.classList.toggle("hidden")
     }
 
