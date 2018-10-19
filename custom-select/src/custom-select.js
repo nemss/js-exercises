@@ -1,5 +1,4 @@
 import {Http} from './http';
-import {CountryData} from './country-data';
 
 export class CustomSelect {
     constructor(container ,dataUrl = null) {
@@ -9,8 +8,9 @@ export class CustomSelect {
 
     inputName = null
     labelElement = null;
-    dataValue = null;
-    dataLabel = null;
+    dataDefaultValue = null;
+    dataDefaultLabel = null;
+    
 
     inputElement = null;
     buttonElement = null;
@@ -34,10 +34,6 @@ export class CustomSelect {
 
     createElementForJson = () => {
         this.container.innerHTML = this.createHtmlForJson();
-        this.dataValue = this.container.getAttribute('data-value');
-        this.dataLabel = this.container.getAttribute('data-label');
-        console.log(this.dataLabel);
-        console.log(this.dataValue);
         this.repeatElements();
         this.inputElement = this.container.querySelector('input');
     }
@@ -71,19 +67,18 @@ export class CustomSelect {
     getDataFromServer = () => {
         Http.getData(this.dataUrl)
         .then(responseDate => {
-            this.data = responseDate.map(element => {return element});
-            console.log(this.data)
+            let dataValue = this.container.getAttribute('data-value'),
+                dataLabel = this.container.getAttribute('data-label');
+            this.dataDefaultLabel = this.container.getAttribute('data-default-label');
+            this.data = responseDate.map(element => { return {value: element[`${dataValue}`], label: element[`${dataLabel}`]}});
+            this.dataDefaultValue = this.data.find(e => e.label === `${this.dataDefaultLabel}`).value;
             this.createCustomSelect();
         })
-        .catch(error => console.log(error)); 
+        .catch(error => alert(error)); 
     }
 
-    addUnordertList = (label, value) => {
-        if(this.dataUrl === null) {
-            return this.data.map((element) => {return `<li data-value="${element.value}">${element.label}</li>`})
-        } else {
-            return this.data.map((element, index) => {return `<li data-value="${element[value]}">${element[label]}</li>`})
-        }
+    addUnordertList = () => {
+        return this.data.map((element) => {return `<li data-value="${element.value}">${element.label}</li>`})
     }
 
     repeatElements = () => {
@@ -106,11 +101,11 @@ export class CustomSelect {
     createHtmlForJson = (label, value) => {
         return `<div>
                     <button>Button</button>
-                    <input type="text" disable readonly value="" >
+                    <input type="text" disable readonly value="" " >
                     <span class="custom-select__label"></span>
                 </div>
                 <ul class="hidden">
-                    ${this.addUnordertList(label, value).join('')}
+                    ${this.addUnordertList().join('')}
                 </ul>`
                 
     }
