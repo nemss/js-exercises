@@ -2,22 +2,28 @@ import {Http} from './http';
 import {CountryData} from './country-data';
 
 export class CustomSelect {
-    constructor(container ,dataUrl) {
+    constructor(container ,dataUrl = null) {
         this.container = container;
         this.dataUrl = dataUrl;
     }
 
-    elementClass = '.custom-select'
-    inputElement = null
+    inputName = null
+    labelElement = null;
+    dataValue = null;
+    dataLabel = null;
+
+    inputElement = null;
     buttonElement = null;
     listElement = null;
     data = [];
 
-    createCustomSelect = () => {    
-        this.container.innerHTML = this.createCustomHtml();
-        this.buttonElement = this.container.querySelector('button');
-        this.inputElement = this.container.querySelector('input');
-        this.listElement = this.container.querySelector('ul');
+    createCustomSelect = () => {
+        if(this.dataUrl === null) {
+            this.createElementForSelect();
+        } else {
+            this.createElementForJson();
+        }
+
         this.buttonElement.addEventListener('click', this.showAndHideClieckHandler)
         this.listElement.addEventListener('click', this.listItemClickHandler)
     }
@@ -26,35 +32,85 @@ export class CustomSelect {
         this.listElement.classList.toggle("hidden")
     }
 
-    listItemClickHandler = (e) => {
-        this.changeInputValue(e.target.innerHTML);
+    createElementForJson = () => {
+        this.container.innerHTML = this.createHtmlForJson();
+        this.dataValue = this.container.getAttribute('data-value');
+        this.dataLabel = this.container.getAttribute('data-label');
+        console.log(this.dataLabel);
+        console.log(this.dataValue);
+        this.repeatElements();
+        this.inputElement = this.container.querySelector('input');
     }
 
-    changeInputValue = (newValue) => {
+    createElementForSelect = () => {
+        this.container.insertAdjacentHTML('beforeend', this.createHtmlForSelect());
+        this.repeatElements();
+        this.inputElement = this.container.querySelector('select');
+        this.labelElement = this.container.querySelector('span');
+        this.labelElement.textContent = this.inputElement.options[this.inputElement.selectedIndex].text;
+    }
+
+    listItemClickHandler = (e) => {
+        this.changeInputValue(e.target.innerHTML, e.target.getAttribute('data-value'));
+    }
+
+    changeInputValue = (newLabel, newValue) => {
         this.inputElement.value = newValue
+        this.labelElement.textContent = newLabel
+    }
+
+    getDataFromSelect(el) {
+        let options = el.querySelectorAll('option');
+        options.forEach((el) => {
+            this.data.push({value: el.value, label: el.text})
+        })  
+
+       this.createCustomSelect();
     }
 
     getDataFromServer = () => {
         Http.getData(this.dataUrl)
         .then(responseDate => {
-            const countriesData = responseDate.countries.country;
-            this.data = countriesData.map(element => {return new CountryData(element.countryName, element.capital)});
+            this.data = responseDate.map(element => {return element});
+            console.log(this.data)
             this.createCustomSelect();
         })
         .catch(error => console.log(error)); 
     }
 
-    addUnordertList = () => {
-        return this.data.map((element) => {return `<li>${element.countryName}</li>`})
+    addUnordertList = (label, value) => {
+        if(this.dataUrl === null) {
+            return this.data.map((element) => {return `<li data-value="${element.value}">${element.label}</li>`})
+        } else {
+            return this.data.map((element, index) => {return `<li data-value="${element[value]}">${element[label]}</li>`})
+        }
     }
 
-    createCustomHtml = () => {
+    repeatElements = () => {
+        this.labelElement = this.container.querySelector('span');
+        this.buttonElement = this.container.querySelector('button');
+        this.listElement = this.container.querySelector('ul');
+    }
+
+    createHtmlForSelect = () => {
         return `<div>
                     <button>Button</button>
-                    <input type="text" disable placeholder="Select country" readonly>
+                    <span class="custom-select__label"></span>
                 </div>
                 <ul class="hidden">
                     ${this.addUnordertList().join('')}
+                </ul>`
+                
+    }
+
+    createHtmlForJson = (label, value) => {
+        return `<div>
+                    <button>Button</button>
+                    <input type="text" disable readonly value="" >
+                    <span class="custom-select__label"></span>
+                </div>
+                <ul class="hidden">
+                    ${this.addUnordertList(label, value).join('')}
                 </ul>`
                 
     }
