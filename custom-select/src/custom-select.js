@@ -75,16 +75,18 @@ export class CustomSelect {
     getDataFromServer = () => {
         Http.getData(this.dataUrl)
         .then(responseDate => {
-            let dataValue = this.container.getAttribute('data-value'),
+            if(this.container.hasAttribute('data-value') && this.container.hasAttribute('data-label')) {
+                let dataValue = this.container.getAttribute('data-value'),
                 dataLabel = this.container.getAttribute('data-label');
                 this.data = responseDate.map(element => { return {value: element[`${dataValue}`], label: element[`${dataLabel}`]}});
+            }
             if(this.container.hasAttribute('data-default-label') && this.container.getAttribute('data-default-label').length > 0) {
                 this.dataDefaultLabel = this.container.getAttribute('data-default-label');
                 this.dataDefaultValue = this.data.find(e => e.label === `${this.dataDefaultLabel}`).value;
             }
             this.createCustomSelect();
         })
-        .catch(error => console.log(error)); 
+        .catch(error => alert(error)); 
     }
 
     addUnordertList = () => {
