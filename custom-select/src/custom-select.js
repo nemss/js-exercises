@@ -17,7 +17,7 @@ export class CustomSelect {
     listElement = null;
     data = [];
 
-    createCustomSelect = () => {
+    render = () => {
         if(this.dataUrl === null) {
             this.createElementForSelect();
         } else {
@@ -32,13 +32,22 @@ export class CustomSelect {
         this.listElement.addEventListener('click', this.listItemClickHandler)
     }
 
+    listItemClickHandler = (e) => {
+        this.changeInputValue(e.target.innerHTML, e.target.getAttribute('data-value'));
+    }
+
     showAndHideClickHandler = (e) => {
         this.listElement.classList.toggle("hidden")
     }
+    
+    changeInputValue = (newLabel, newValue) => {
+        this.inputElement.value = newValue
+        this.labelElement.textContent = newLabel
+    }
 
     createElementForJson = () => {
-        this.container.innerHTML = this.createHtmlForJson();
-        this.repeatElements();  
+        this.container.innerHTML = this.createHtml();
+        this.defaultElements();  
         this.inputElement = this.container.querySelector('input');
         if(this.dataDefaultLabel != null) {
             this.labelElement.textContent = this.dataDefaultLabel;
@@ -47,20 +56,26 @@ export class CustomSelect {
     }
 
     createElementForSelect = () => {
-        this.container.insertAdjacentHTML('beforeend', this.createHtmlForSelect());
-        this.repeatElements();
+        // Insert template
+        this.container.insertAdjacentHTML('beforeend', this.createHtml());
+
+        // Creating the default ui html elements
+        this.defaultElements();
+   
+        // Selecting needed elements
         this.inputElement = this.container.querySelector('select');
         this.labelElement = this.container.querySelector('span');
-        this.labelElement.textContent = this.inputElement.options[this.inputElement.selectedIndex].text;
+
+        let defaultValue = this.inputElement.selectedIndex,
+            defaultLabel = this.inputElement.options[defaultValue].text;
+
+        this.labelElement.textContent = defaultLabel;
     }
 
-    listItemClickHandler = (e) => {
-        this.changeInputValue(e.target.innerHTML, e.target.getAttribute('data-value'));
-    }
-
-    changeInputValue = (newLabel, newValue) => {
-        this.inputElement.value = newValue
-        this.labelElement.textContent = newLabel
+    defaultElements = () => {
+        this.labelElement = this.container.querySelector('span');
+        this.buttonElement = this.container.querySelector('button');
+        this.listElement = this.container.querySelector('ul');
     }
 
     getDataFromSelect(el) {
@@ -69,7 +84,7 @@ export class CustomSelect {
             this.data.push({value: el.value, label: el.text})
         })  
 
-       this.createCustomSelect();
+       this.render();
     }
 
     getDataFromServer = () => {
@@ -84,7 +99,7 @@ export class CustomSelect {
                 this.dataDefaultLabel = this.container.getAttribute('data-default-label');
                 this.dataDefaultValue = this.data.find(e => e.label === `${this.dataDefaultLabel}`).value;
             }
-            this.createCustomSelect();
+            this.render();
         })
         .catch(error => alert(error)); 
     }
@@ -93,27 +108,10 @@ export class CustomSelect {
         return this.data.map((element) => {return `<li data-value="${element.value}">${element.label}</li>`})
     }
 
-    repeatElements = () => {
-        this.labelElement = this.container.querySelector('span');
-        this.buttonElement = this.container.querySelector('button');
-        this.listElement = this.container.querySelector('ul');
-    }
-
-    createHtmlForSelect = () => {
+    createHtml = () => {
         return `<div>
-                    <button>Button</button>
-                    <span class="custom-select__label"></span>
-                </div>
-                <ul class="hidden">
-                    ${this.addUnordertList().join('')}
-                </ul>`
-                
-    }
-
-    createHtmlForJson = (label, value) => {
-        return `<div>
-                    <button>Button</button>
-                    <input type="text" disable readonly value="" " >
+                    <button>^</button>
+                    ${this.dataUrl === null ? '' : '<input type="text" disable readonly value="" " >'}
                     <span class="custom-select__label"></span>
                 </div>
                 <ul class="hidden">
