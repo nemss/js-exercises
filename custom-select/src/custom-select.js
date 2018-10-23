@@ -18,12 +18,7 @@ export class CustomSelect {
     data = [];
 
     render = () => {
-        if(this.dataUrl === null) {
-            this.createElementForSelect();
-        } else {
-            this.createElementForJson();
-        }
-
+        this.dataUrl === null ? this.createElementForSelect() : this.createElementForJson()
         this.initialEventListener();
     }
 
@@ -37,7 +32,8 @@ export class CustomSelect {
     }
 
     showAndHideClickHandler = (e) => {
-        this.listElement.classList.toggle("hidden")
+        this.listElement.classList.toggle("hidden");
+        this.container.querySelector('.custom-select-input').classList.toggle("custom-select-input--active");
     }
     
     changeInputValue = (newLabel, newValue) => {
@@ -46,9 +42,16 @@ export class CustomSelect {
     }
 
     createElementForJson = () => {
+        // Insert template
         this.container.innerHTML = this.createHtml();
+
+        //Creating the default ui html elements
         this.defaultElements();  
+
+        //Selecting needed element
         this.inputElement = this.container.querySelector('input');
+
+        //Checking existed data default value
         if(this.dataDefaultLabel != null) {
             this.labelElement.textContent = this.dataDefaultLabel;
             this.inputElement.value = this.dataDefaultValue;
@@ -109,7 +112,7 @@ export class CustomSelect {
     }
 
     createHtml = () => {
-        return `<div>
+        return `<div class="custom-select-input">
                     <button>^</button>
                     ${this.dataUrl === null ? '' : '<input type="text" disable readonly value="" " >'}
                     <span class="custom-select__label"></span>
