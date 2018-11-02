@@ -1,13 +1,88 @@
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.custom-select {
+  margin: 0.2rem;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.custom-select ul {
+  list-style: none;
+}
+
+.custom-select select {
+  visibility: hidden;
+}
+
+.custom-select__input {
+  position: relative;
+  width: 10rem;
+  height: 2rem;
+  padding: 0.2rem;
+  border: 1px solid #434343;
+  cursor: pointer;
+}
+
+button,
+input[type="submit"],
+input[type="reset"] {
+  padding: 0;
+  background: none;
+  color: inherit;
+  border: none;
+  outline: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.custom-select__input button {
+  position: absolute;
+  height: 1.9rem;
+  width: 1.89rem;
+  left: 8rem;
+  top: 0;
+  padding: 0;
+  background: #434343;
+  color: white;
+  border: none;
+  outline: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.custom-select__input input {
+  display: none;
+}
+
+.custom-select__label {
+  padding: 0 0.2rem;
+}
+
+.custom-select__list {
+  border: 1px solid #434343;
+  border-radius: 0 0 4px 4px;
+  border-top: none;
+  width: 10rem;
+}
+
+.custom-select__item {
+  padding: 0 0.3rem;
+  cursor: pointer;
+}
+
+.custom-select__item:hover {
+  background: #434343;
+  color: white;
 }
 
 .hidden {
-    display: none;
-}
-
-select {
-    visibility: hidden;
+  display: none;
 }

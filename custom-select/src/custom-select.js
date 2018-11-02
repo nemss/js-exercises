@@ -33,7 +33,7 @@ export class CustomSelect {
 
     showAndHideClickHandler = (e) => {
         this.listElement.classList.toggle("hidden");
-        this.container.querySelector('.custom-select-input').classList.toggle("custom-select-input--active");
+        this.container.querySelector('.custom-selec__input').classList.toggle("custom-select-input--active");
     }
     
     changeInputValue = (newLabel, newValue) => {
@@ -108,16 +108,16 @@ export class CustomSelect {
     }
 
     addUnordertList = () => {
-        return this.data.map((element) => {return `<li data-value="${element.value}">${element.label}</li>`})
+        return this.data.map((element) => {return `<li class="custom-select__item" data-value="${element.value}">${element.label}</li>`})
     }
 
     createHtml = () => {
-        return `<div class="custom-select-input">
+        return `<div class="custom-select__input">
                     <button>^</button>
                     ${this.dataUrl === null ? '' : '<input type="text" disable readonly value="" " >'}
                     <span class="custom-select__label"></span>
                 </div>
-                <ul class="hidden">
+                <ul class="hidden custom-select__list">
                     ${this.addUnordertList().join('')}
                 </ul>`
                 
