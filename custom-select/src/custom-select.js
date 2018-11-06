@@ -33,7 +33,7 @@ export class CustomSelect {
 
     showAndHideClickHandler = (e) => {
         this.listElement.classList.toggle("hidden");
-        this.container.querySelector('.custom-selec__input').classList.toggle("custom-select-input--active");
+        this.container.querySelector('.custom-select__input').classList.toggle("custom-select-input--active");
     }
     
     changeInputValue = (newLabel, newValue) => {
@@ -120,6 +120,5 @@ export class CustomSelect {
                 <ul class="hidden custom-select__list">
                     ${this.addUnordertList().join('')}
                 </ul>`
-                
     }
 }

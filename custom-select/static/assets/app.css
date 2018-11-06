@@ -62,6 +62,16 @@ input[type="reset"] {
   display: none;
 }
 
+.custom-select-input--active button {
+  transform: rotate(180deg);
+  transition: transform 500ms;
+}
+
+.custom-select__input button {
+  transform: rotate(-360deg);
+  transition: transform 500ms;
+}
+
 .custom-select__label {
   padding: 0 0.2rem;
 }
@@ -85,4 +95,16 @@ input[type="reset"] {
 
 .hidden {
   display: none;
+}
+
+@keyframes buttonRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
 }
