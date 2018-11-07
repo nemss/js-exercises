@@ -8,23 +8,63 @@ export class CustomSelect {
 
     inputName = null
     labelElement = null;
-    dataDefaultValue = null;
-    dataDefaultLabel = null;
-    
-
+    value = null;
+    label = null;
+    selectedOption = null;
+    mainDiv = null;
     inputElement = null;
-    buttonElement = null;
     listElement = null;
+    lisItems = null;
     data = [];
 
     render = () => {
         this.dataUrl === null ? this.createElementForSelect() : this.createElementForJson()
         this.initialEventListener();
+        this.setSelectedItem();
     }
 
     initialEventListener = () => {
-        this.buttonElement.addEventListener('click', this.showAndHideClickHandler)
-        this.listElement.addEventListener('click', this.listItemClickHandler)
+        this.mainDiv.addEventListener('click', this.showAndHideClickHandler);
+        this.listElement.addEventListener('click', this.listItemClickHandler);
+        this.listElement.addEventListener('mouseover', this.addColorItemHandler)
+        this.listElement.addEventListener('mouseout', this.removeColorItemHandler);
+        document.addEventListener('click', this.showAndHideDiv);
+    }
+
+    removeColorItemHandler = (e) => {
+        e.target.classList.remove('selected');
+    }
+
+    addColorItemHandler = (e) => {
+        e.target.classList.add('selected');
+    }
+
+    moveItem = (e) => {
+        let keyName = e.key;
+        switch (keyName) {
+            case 'ArrowUp':
+                if (this.selectedOption.previousElementSibling) {
+                    this.selectedOption.classList.remove('selected')
+                    this.selectedOption.previousElementSibling.classList.add('selected')
+                    this.selectedOption = this.selectedOption.previousElementSibling
+                }
+                break;
+            case 'ArrowDown':
+                if (this.selectedOption.nextElementSibling) {
+                    this.selectedOption.classList.remove('selected')
+                    this.selectedOption.nextElementSibling.classList.add('selected')
+                    this.selectedOption = this.selectedOption.nextElementSibling
+                }
+                break;
+            case 'Enter': 
+                this.changeInputValue(this.selectedOption.innerHTML, this.selectedOption.getAttribute('data-value'))
+                break;
+          }
+    }
+
+    showAndHideDiv = (e) => {
+        if (e.target.closest(".custom-select")) return;
+        this.listElement.classList.add("hidden");
     }
 
     listItemClickHandler = (e) => {
@@ -34,9 +74,18 @@ export class CustomSelect {
     showAndHideClickHandler = (e) => {
         this.listElement.classList.toggle("hidden");
         this.container.querySelector('.custom-select__input').classList.toggle("custom-select-input--active");
+        this.container.classList.toggle("custom-select--active");
+        this.setSelectedItem();
+        if (this.listElement.classList.contains('hidden')) {
+            document.removeEventListener('keydown', this.moveItem);
+        } else {
+            document.addEventListener('keydown', this.moveItem);
+        }
     }
     
     changeInputValue = (newLabel, newValue) => {
+        this.value = newValue;
+        this.label = newLabel;
         this.inputElement.value = newValue
         this.labelElement.textContent = newLabel
     }
@@ -52,9 +101,9 @@ export class CustomSelect {
         this.inputElement = this.container.querySelector('input');
 
         //Checking existed data default value
-        if(this.dataDefaultLabel != null) {
-            this.labelElement.textContent = this.dataDefaultLabel;
-            this.inputElement.value = this.dataDefaultValue;
+        if(this.label != null) {
+            this.labelElement.textContent = this.label;
+            this.inputElement.value = this.value;
         }
     }
 
@@ -67,7 +116,7 @@ export class CustomSelect {
    
         // Selecting needed elements
         this.inputElement = this.container.querySelector('select');
-        this.labelElement = this.container.querySelector('span');
+        //sthis.labelElement = this.container.querySelector('span');
 
         let defaultValue = this.inputElement.selectedIndex,
             defaultLabel = this.inputElement.options[defaultValue].text;
@@ -77,17 +126,27 @@ export class CustomSelect {
 
     defaultElements = () => {
         this.labelElement = this.container.querySelector('span');
-        this.buttonElement = this.container.querySelector('button');
         this.listElement = this.container.querySelector('ul');
+        this.lisItems = this.container.querySelectorAll('li');
+        this.mainDiv = this.container.querySelector('div');
     }
 
     getDataFromSelect(el) {
         let options = el.querySelectorAll('option');
         options.forEach((el) => {
             this.data.push({value: el.value, label: el.text})
-        })  
+        })
+        this.value = el.querySelector('select').value
+        this.render();
+    }
 
-       this.render();
+    setSelectedItem = () => {
+        if (this.selectedOption) {
+            this.selectedOption.classList.remove('selected')
+        }
+
+        this.selectedOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`)
+        this.selectedOption.classList.add('selected')
     }
 
     getDataFromServer = () => {
@@ -99,12 +158,12 @@ export class CustomSelect {
                 this.data = responseDate.map(element => { return {value: element[`${dataValue}`], label: element[`${dataLabel}`]}});
             }
             if(this.container.hasAttribute('data-default-label') && this.container.getAttribute('data-default-label').length > 0) {
-                this.dataDefaultLabel = this.container.getAttribute('data-default-label');
-                this.dataDefaultValue = this.data.find(e => e.label === `${this.dataDefaultLabel}`).value;
+                this.label = this.container.getAttribute('data-default-label');
+                this.value = this.data.find(e => e.label === `${this.label}`).value;
             }
             this.render();
         })
-        .catch(error => alert(error)); 
+        .catch(error => alert(error))
     }
 
     addUnordertList = () => {
@@ -113,11 +172,11 @@ export class CustomSelect {
 
     createHtml = () => {
         return `<div class="custom-select__input">
-                    <button>^</button>
+                    <button>&nbsp;</button>
                     ${this.dataUrl === null ? '' : '<input type="text" disable readonly value="" " >'}
                     <span class="custom-select__label"></span>
                 </div>
-                <ul class="hidden custom-select__list">
+                <ul class="custom-select__list hidden">
                     ${this.addUnordertList().join('')}
                 </ul>`
     }

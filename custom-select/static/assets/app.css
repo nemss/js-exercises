@@ -5,7 +5,9 @@
 }
 
 .custom-select {
+  position: relative;
   margin: 0.2rem;
+  width: 160px;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -14,17 +16,12 @@
   user-select: none;
 }
 
-.custom-select ul {
-  list-style: none;
-}
-
 .custom-select select {
-  visibility: hidden;
+  display: none;
 }
 
 .custom-select__input {
   position: relative;
-  width: 10rem;
   height: 2rem;
   padding: 0.2rem;
   border: 1px solid #434343;
@@ -43,11 +40,14 @@ input[type="reset"] {
   cursor: pointer;
 }
 
+.hidden {
+  display: none; 
+}
 .custom-select__input button {
   position: absolute;
   height: 1.9rem;
-  width: 1.89rem;
-  left: 8rem;
+  width: 1.9rem;
+  right: 0;
   top: 0;
   padding: 0;
   background: #434343;
@@ -62,14 +62,27 @@ input[type="reset"] {
   display: none;
 }
 
-.custom-select-input--active button {
-  transform: rotate(180deg);
-  transition: transform 500ms;
+.custom-select__input.custom-select-input--active button::before {
+  transform: rotateZ(-180deg) translateY(50%);
 }
 
-.custom-select__input button {
-  transform: rotate(-360deg);
-  transition: transform 500ms;
+
+.custom-select__input button::before {
+  content: '^';
+  position: absolute;
+  display: block;
+  top: 50%;
+  right: 10px;
+  height: 10px;
+  transform: translateY(-50%);
+  transition: transform .2s;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.custom-select.custom-select--active .custom-select__list {
+  opacity: 1;
+  animation: fadeInUp .2s;
 }
 
 .custom-select__label {
@@ -77,34 +90,43 @@ input[type="reset"] {
 }
 
 .custom-select__list {
+  position: absolute;
+  width: 100%;
   border: 1px solid #434343;
   border-radius: 0 0 4px 4px;
   border-top: none;
-  width: 10rem;
+  background-color: white;
+  z-index: 1;
+}
+
+.custom-select__list.hidden {
+  display: none;
 }
 
 .custom-select__item {
   padding: 0 0.3rem;
   cursor: pointer;
+  list-style: none;
 }
 
-.custom-select__item:hover {
+.custom-select__item.selected {
   background: #434343;
   color: white;
 }
 
-.hidden {
-  display: none;
-}
+/* .custom-select__item:hover {
+  background: #434343;
+  color: white;
+} */
 
-@keyframes buttonRotate {
-  0% {
-    transform: rotate(0deg);
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
   }
-  50% {
-    transform: rotate(90deg);
-  }
-  100% {
-    transform: rotate(180deg);
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
