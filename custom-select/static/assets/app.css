@@ -4,9 +4,24 @@
   box-sizing: border-box;
 }
 
+.main-title {
+  padding: 5px;
+  font-size: 40px;
+  text-align: center;
+  text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9,
+    0 5px 0 #aaa, 0 6px 1px rgba(0, 0, 0, 0.1), 0 0 5px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 5px rgba(0, 0, 0, 0.2),
+    0 5px 10px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.2),
+    0 20px 20px rgba(0, 0, 0, 0.15);
+}
+
+hr {
+  border-top: 3px double #8c8b8b;
+}
+
 .custom-select {
   position: relative;
-  margin: 0.2rem;
+  margin: 10px auto;
   width: 160px;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -41,7 +56,7 @@ input[type="reset"] {
 }
 
 .hidden {
-  display: none; 
+  display: none;
 }
 .custom-select__input button {
   position: absolute;
@@ -66,23 +81,22 @@ input[type="reset"] {
   transform: rotateZ(-180deg) translateY(50%);
 }
 
-
 .custom-select__input button::before {
-  content: '^';
+  content: "^";
   position: absolute;
   display: block;
   top: 50%;
   right: 10px;
   height: 10px;
   transform: translateY(-50%);
-  transition: transform .2s;
+  transition: transform 0.2s;
   line-height: 1;
   font-weight: bold;
 }
 
 .custom-select.custom-select--active .custom-select__list {
   opacity: 1;
-  animation: fadeInUp .2s;
+  animation: fadeInUp 0.2s;
 }
 
 .custom-select__label {
@@ -114,10 +128,10 @@ input[type="reset"] {
   color: white;
 }
 
-/* .custom-select__item:hover {
-  background: #434343;
-  color: white;
-} */
+.selected--default {
+  background: #dcdcdc;
+  color: black;
+}
 
 @keyframes fadeInUp {
   from {

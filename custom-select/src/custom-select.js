@@ -43,20 +43,20 @@ export class CustomSelect {
         let keyName = e.key;
         switch (keyName) {
             case 'ArrowUp':
-                if (this.selectedOption.previousElementSibling) {
-                    this.selectedOption.classList.remove('selected')
-                    this.selectedOption.previousElementSibling.classList.add('selected')
-                    this.selectedOption = this.selectedOption.previousElementSibling
+                     if (this.selectedOption.previousElementSibling) {
+                    this.selectedOption.classList.remove('selected');
+                    this.selectedOption.previousElementSibling.classList.add('selected');
+                    this.selectedOption = this.selectedOption.previousElementSibling;
                 }
                 break;
-            case 'ArrowDown':
+            case 'ArrowDown': 
                 if (this.selectedOption.nextElementSibling) {
-                    this.selectedOption.classList.remove('selected')
-                    this.selectedOption.nextElementSibling.classList.add('selected')
-                    this.selectedOption = this.selectedOption.nextElementSibling
+                    this.selectedOption.classList.remove('selected');
+                    this.selectedOption.nextElementSibling.classList.add('selected');
+                    this.selectedOption = this.selectedOption.nextElementSibling;
                 }
                 break;
-            case 'Enter': 
+            case 'Enter':
                 this.changeInputValue(this.selectedOption.innerHTML, this.selectedOption.getAttribute('data-value'))
                 break;
           }
@@ -69,6 +69,7 @@ export class CustomSelect {
 
     listItemClickHandler = (e) => {
         this.changeInputValue(e.target.innerHTML, e.target.getAttribute('data-value'));
+        this.setSelectedItem();
     }
 
     showAndHideClickHandler = (e) => {
@@ -86,8 +87,8 @@ export class CustomSelect {
     changeInputValue = (newLabel, newValue) => {
         this.value = newValue;
         this.label = newLabel;
-        this.inputElement.value = newValue
-        this.labelElement.textContent = newLabel
+        this.inputElement.value = newValue;
+        this.labelElement.textContent = newLabel;
     }
 
     createElementForJson = () => {
@@ -136,17 +137,21 @@ export class CustomSelect {
         options.forEach((el) => {
             this.data.push({value: el.value, label: el.text})
         })
-        this.value = el.querySelector('select').value
+        this.value = el.querySelector('select').value;
         this.render();
     }
 
     setSelectedItem = () => {
         if (this.selectedOption) {
-            this.selectedOption.classList.remove('selected')
+            console.log(this.selectedOption);
+            this.selectedOption.classList.remove('selected--default');
+            this.selectedOption.classList.remove('selected');
         }
 
-        this.selectedOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`)
+        this.selectedOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`);
         this.selectedOption.classList.add('selected')
+        this.selectedOption.classList.add('selected--default');
+        console.log(this.selectedOption);
     }
 
     getDataFromServer = () => {
