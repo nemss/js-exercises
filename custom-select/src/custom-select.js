@@ -25,8 +25,6 @@ export class CustomSelect {
 	initialEventListener = () => {
 		this.mainDiv.addEventListener('click', this.toggleList);
 		this.listElement.addEventListener('click', this.listItemClickHandler);
-		this.listElement.addEventListener('mouseover', this.addColorItemHandler)
-		this.listElement.addEventListener('mouseout', this.removeColorItemHandler);
 	}
 
 
@@ -115,9 +113,13 @@ export class CustomSelect {
 		if (this.listElement.classList.contains('hidden')) {
 			document.removeEventListener('keydown', this.moveItem);
 			document.removeEventListener('click', this.detectOutsideClick);
+			this.listElement.removeEventListener('mouseover', this.addColorItemHandler)
+			this.listElement.removeEventListener('mouseout', this.removeColorItemHandler);
 		} else {
 			document.addEventListener('keydown', this.moveItem);
 			document.addEventListener('click', this.detectOutsideClick);
+			this.listElement.addEventListener('mouseover', this.addColorItemHandler)
+			this.listElement.addEventListener('mouseout', this.removeColorItemHandler);
 		}
 	}
 
