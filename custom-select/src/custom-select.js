@@ -48,15 +48,14 @@ export class CustomSelect {
 
 	setSelectedItem = () => {
 		if (this.selectedOption) {
-			this.selectedOption.classList.remove('selected');
-			this.selectedOption.classList.remove('active');
+			this.removeClass(this.selectedOption, 'selected');
+			this.removeClass(this.selectedOption, 'active');
 		}
 
 		this.selectedOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`);
 		this.activeOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`);
-		this.selectedOption.classList.add('active')
-		this.selectedOption.classList.add('selected');
-
+		this.setClass(this.selectedOption, 'selected');
+		this.setClass(this.selectedOption, 'active');
 	}
 
 	moveItem = (e) => {
