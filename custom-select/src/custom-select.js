@@ -6,6 +6,7 @@ export class CustomSelect {
 		this.dataUrl = dataUrl;
 	}
 
+	searchWord = '';
 	labelElement = null;
 	value = null;
 	label = null;
@@ -38,11 +39,13 @@ export class CustomSelect {
 		this.listElement.classList.toggle("hidden");
 
 		if (this.listElement.classList.contains('hidden')) {
+			document.removeEventListener('keydown', this.searchElement);
 			document.removeEventListener('keydown', this.moveItem);
 			document.removeEventListener('click', this.detectOutsideClick);
 			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
 			this.listElement.removeEventListener('mouseout', this.removeColorListItemHandler);
 		} else {
+			document.addEventListener('keydown', this.searchElement);
 			document.addEventListener('keydown', this.moveItem);
 			document.addEventListener('click', this.detectOutsideClick);
 			this.listElement.addEventListener('mouseover', this.setColorListItemHandler)
@@ -50,7 +53,16 @@ export class CustomSelect {
 		}
 	}
 
-	setSelectedItem = () => {
+	searchElement = (e) => {
+		this.searchWord += e.key;
+		// if(e.target !== null) {
+		// 	this.searchElement();
+		// }
+		console.log(this.searchWord);
+		console.log(this.data.filter(e => e.label.toLowerCase().indexOf(this.searchWord.toLowerCase()) > -1));
+	}
+
+		setSelectedItem = () => {
 		if (this.selectedOption) {
 			this.removeClass(this.selectedOption, 'selected');
 			this.removeClass(this.selectedOption, 'active');
