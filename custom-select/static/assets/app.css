@@ -123,12 +123,12 @@ input[type="reset"] {
   list-style: none;
 }
 
-.custom-select__item.selected {
+li.custom-select__item.active {
   background: #434343;
   color: white;
 }
 
-.selected--default {
+.custom-select__item.selected {
   background: #dcdcdc;
   color: black;
 }
