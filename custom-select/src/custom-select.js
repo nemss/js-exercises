@@ -28,14 +28,14 @@ export class CustomSelect {
 	}
 
 
-	removeColorItemHandler = (e) => {
+	removeColorListItemHandler = (e) => {
 		if (e.target !== this.selectedOption && e.relatedTarget.nodeName === 'LI') {
 			this.removeClass(e.target, 'active');
 		}
 		this.activeOption = e.target;
 	}
 
-	addColorItemHandler = (e) => {
+	setColorListItemHandler = (e) => {
 		if (e.target !== this.selectedOption && this.activeOption !== e.target) {
 			this.setClass(e.target, 'active');
 			this.removeClass(this.activeOption, 'active');
@@ -113,13 +113,13 @@ export class CustomSelect {
 		if (this.listElement.classList.contains('hidden')) {
 			document.removeEventListener('keydown', this.moveItem);
 			document.removeEventListener('click', this.detectOutsideClick);
-			this.listElement.removeEventListener('mouseover', this.addColorItemHandler)
-			this.listElement.removeEventListener('mouseout', this.removeColorItemHandler);
+			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
+			this.listElement.removeEventListener('mouseout', this.removeColorListItemHandler);
 		} else {
 			document.addEventListener('keydown', this.moveItem);
 			document.addEventListener('click', this.detectOutsideClick);
-			this.listElement.addEventListener('mouseover', this.addColorItemHandler)
-			this.listElement.addEventListener('mouseout', this.removeColorItemHandler);
+			this.listElement.addEventListener('mouseover', this.setColorListItemHandler)
+			this.listElement.addEventListener('mouseout', this.removeColorListItemHandler);
 		}
 	}
 
