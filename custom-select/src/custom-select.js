@@ -6,7 +6,6 @@ export class CustomSelect {
 		this.dataUrl = dataUrl;
 	}
 
-	inputName = null;
 	labelElement = null;
 	value = null;
 	label = null;
@@ -17,32 +16,34 @@ export class CustomSelect {
 	lisItems = null;
 	data = [];
 
+
 	render = () => {
 		this.dataUrl === null ? this.createElementForSelect() : this.createElementForJson()
 		this.initialEventListener();
 	}
 
 	initialEventListener = () => {
-		this.mainDiv.addEventListener('click', this.showAndHideClickHandler);
+		this.mainDiv.addEventListener('click', this.toggleList);
 		this.listElement.addEventListener('click', this.listItemClickHandler);
 		this.listElement.addEventListener('mouseover', this.addColorItemHandler)
 		this.listElement.addEventListener('mouseout', this.removeColorItemHandler);
 	}
 
+
 	removeColorItemHandler = (e) => {
 		if (e.target !== this.selectedOption && e.relatedTarget.nodeName === 'LI') {
-			e.target.classList.remove('active');
+			this.removeClass(e.target, 'active');
 		}
 		this.activeOption = e.target;
 	}
 
 	addColorItemHandler = (e) => {
 		if (e.target !== this.selectedOption && this.activeOption !== e.target) {
-			e.target.classList.add('active');
-			this.activeOption.classList.remove('active')
-			this.selectedOption.classList.remove('active');
+			this.setClass(e.target, 'active');
+			this.removeClass(this.activeOption, 'active');
+			this.removeClass(this.selectedOption, 'active');
 		} else {
-			e.target.classList.add('active');
+			this.setClass(e.target, 'active');
 		}
 	}
 
@@ -54,8 +55,8 @@ export class CustomSelect {
 
 		this.selectedOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`);
 		this.activeOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`);
-		this.setClass(this.selectedOption, 'selected');
 		this.setClass(this.selectedOption, 'active');
+		this.setClass(this.selectedOption, 'selected');
 	}
 
 	moveItem = (e) => {
@@ -79,40 +80,44 @@ export class CustomSelect {
 			case 'Enter':
 				this.changeInputValue(this.activeOption.innerHTML, this.activeOption.getAttribute('data-value'))
 				break;
+			case 'Escape':
+				this.toggleList();
+				break;
 		}
 	}
 
-	showAndHideDiv = (el = null) => {
-		if (el !== null) {
-			if (el.closest(".custom-select")) return
+	detectOutsideClick = ({target}) => {
+		if (target !== null) {
+			if (target.closest(".custom-select")) {
+				return false
+			} else {
+				this.toggleList()
+			}
 		}
-		if (el !== this.container) {
-			this.container.classList.remove('custom-select--active')
-			this.removeClass(this.activeOption, 'active')
-			this.activeOption = null
-		}
-		this.listElement.classList.add("hidden");
 	}
 
 	listItemClickHandler = (e) => {
 		this.changeInputValue(e.target.innerHTML, e.target.getAttribute('data-value'));
-		this.showAndHideDiv();
+		this.toggleList();
 	}
 
-	showAndHideClickHandler = (e) => {
+	toggleList = () => {
+		let element = this.container.querySelector('.custom-select__input');
+		element.classList.toggle("custom-select-input--active");
 
-		this.listElement.classList.toggle("hidden");
-		this.container.querySelector('.custom-select__input').classList.toggle("custom-select-input--active");
 		if (!this.container.classList.contains('custom-select--active')) {
 			this.setSelectedItem();
 		}
-		this.container.classList.toggle("custom-select--active");
+
+		this.container.classList.toggle("custom-select--active")
+		this.listElement.classList.toggle("hidden");
+
 		if (this.listElement.classList.contains('hidden')) {
 			document.removeEventListener('keydown', this.moveItem);
-			document.removeEventListener('click', e => this.showAndHideDiv(e.target));
+			document.removeEventListener('click', this.detectOutsideClick);
 		} else {
 			document.addEventListener('keydown', this.moveItem);
-			document.addEventListener('click', e => this.showAndHideDiv(e.target));
+			document.addEventListener('click', this.detectOutsideClick);
 		}
 	}
 
@@ -121,7 +126,7 @@ export class CustomSelect {
 		this.label = newLabel;
 		this.inputElement.value = newValue;
 		this.labelElement.textContent = newLabel;
-		this.showAndHideDiv();
+		// this.showAndHideDiv();
 	}
 
 	createElementForJson = () => {
@@ -150,10 +155,9 @@ export class CustomSelect {
 
 		// Selecting needed elements
 		this.inputElement = this.container.querySelector('select');
-		//sthis.labelElement = this.container.querySelector('span');
 
 		let defaultValue = this.inputElement.selectedIndex,
-			defaultLabel = this.inputElement.options[defaultValue].text;
+			  defaultLabel = this.inputElement.options[defaultValue].text;
 
 		this.labelElement.textContent = defaultLabel;
 	}
