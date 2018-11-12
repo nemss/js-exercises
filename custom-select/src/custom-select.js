@@ -27,21 +27,26 @@ export class CustomSelect {
 		this.listElement.addEventListener('click', this.listItemClickHandler);
 	}
 
+	toggleList = () => {
+		let element = this.container.querySelector('.custom-select__input');
+		element.classList.toggle("custom-select-input--active");
 
-	removeColorListItemHandler = (e) => {
-		if (e.target !== this.selectedOption && e.relatedTarget.nodeName === 'LI') {
-			this.removeClass(e.target, 'active');
+		if (!this.container.classList.contains('custom-select--active')) {
+			this.setSelectedItem();
 		}
-		this.activeOption = e.target;
-	}
+		this.container.classList.toggle("custom-select--active")
+		this.listElement.classList.toggle("hidden");
 
-	setColorListItemHandler = (e) => {
-		if (e.target !== this.selectedOption && this.activeOption !== e.target) {
-			this.setClass(e.target, 'active');
-			this.removeClass(this.activeOption, 'active');
-			this.removeClass(this.selectedOption, 'active');
+		if (this.listElement.classList.contains('hidden')) {
+			document.removeEventListener('keydown', this.moveItem);
+			document.removeEventListener('click', this.detectOutsideClick);
+			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
+			this.listElement.removeEventListener('mouseout', this.removeColorListItemHandler);
 		} else {
-			this.setClass(e.target, 'active');
+			document.addEventListener('keydown', this.moveItem);
+			document.addEventListener('click', this.detectOutsideClick);
+			this.listElement.addEventListener('mouseover', this.setColorListItemHandler)
+			this.listElement.addEventListener('mouseout', this.removeColorListItemHandler);
 		}
 	}
 
@@ -51,8 +56,8 @@ export class CustomSelect {
 			this.removeClass(this.selectedOption, 'active');
 		}
 
-		this.selectedOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`);
-		this.activeOption = document.querySelector(`.custom-select__item[data-value='${this.value}']`);
+		this.selectedOption = document.querySelector(this.selectedActiveOptionString());
+		this.activeOption = document.querySelector(this.selectedActiveOptionString());
 		this.setClass(this.selectedOption, 'active');
 		this.setClass(this.selectedOption, 'selected');
 	}
@@ -84,6 +89,23 @@ export class CustomSelect {
 		}
 	}
 
+	removeColorListItemHandler = (e) => {
+		if (e.target !== this.selectedOption && e.relatedTarget.nodeName === 'LI') {
+			this.removeClass(e.target, 'active');
+		}
+		this.activeOption = e.target;
+	}
+
+	setColorListItemHandler = (e) => {
+		if (e.target !== this.selectedOption && this.activeOption !== e.target) {
+			this.setClass(e.target, 'active');
+			this.removeClass(this.activeOption, 'active');
+			this.removeClass(this.selectedOption, 'active');
+		} else {
+			this.setClass(e.target, 'active');
+		}
+	}
+
 	detectOutsideClick = ({target}) => {
 		if (target !== null) {
 			if (target.closest(".custom-select")) {
@@ -97,30 +119,6 @@ export class CustomSelect {
 	listItemClickHandler = (e) => {
 		this.changeInputValue(e.target.innerHTML, e.target.getAttribute('data-value'));
 		this.toggleList();
-	}
-
-	toggleList = () => {
-		let element = this.container.querySelector('.custom-select__input');
-		element.classList.toggle("custom-select-input--active");
-
-		if (!this.container.classList.contains('custom-select--active')) {
-			this.setSelectedItem();
-		}
-
-		this.container.classList.toggle("custom-select--active")
-		this.listElement.classList.toggle("hidden");
-
-		if (this.listElement.classList.contains('hidden')) {
-			document.removeEventListener('keydown', this.moveItem);
-			document.removeEventListener('click', this.detectOutsideClick);
-			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
-			this.listElement.removeEventListener('mouseout', this.removeColorListItemHandler);
-		} else {
-			document.addEventListener('keydown', this.moveItem);
-			document.addEventListener('click', this.detectOutsideClick);
-			this.listElement.addEventListener('mouseover', this.setColorListItemHandler)
-			this.listElement.addEventListener('mouseout', this.removeColorListItemHandler);
-		}
 	}
 
 	changeInputValue = (newLabel, newValue) => {
@@ -171,14 +169,6 @@ export class CustomSelect {
 		this.mainDiv = this.container.querySelector('div');
 	}
 
-	setClass = (el, elClass) => {
-		el.classList.add(elClass)
-	}
-
-	removeClass = (el, elClass) => {
-		el.classList.remove(elClass)
-	}
-
 	getDataFromSelect(el) {
 		let options = el.querySelectorAll('option');
 		options.forEach((el) => {
@@ -207,7 +197,19 @@ export class CustomSelect {
 			.catch(error => alert(error))
 	}
 
-	addUnordertList = () => {
+	setClass = (el, elClass) => {
+		el.classList.add(elClass)
+	}
+
+	removeClass = (el, elClass) => {
+		el.classList.remove(elClass)
+	}
+
+	selectedActiveOptionString = () => {
+		return `.custom-select__item[data-value='${this.value}']`;
+	}
+
+	createListItems = () => {
 		return this.data.map((element) => {
 			return `<li class="custom-select__item" data-value="${element.value}">${element.label}</li>`
 		})
@@ -220,7 +222,7 @@ export class CustomSelect {
                     <span class="custom-select__label"></span>
                 </div>
                 <ul class="custom-select__list hidden">
-                    ${this.addUnordertList().join('')}
+                    ${this.createListItems().join('')}
                 </ul>`
 	}
 }
