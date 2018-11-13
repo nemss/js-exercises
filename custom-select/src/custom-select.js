@@ -61,25 +61,21 @@ export class CustomSelect {
 		}
 
 		let filter = this.searchWord.toLowerCase();
-		// @TODO - use the map or forEach methods. .map returns a new arr
-		for (let i = 0;i < this.lisItems.length; i++) {
-			let textContentLabel = this.lisItems[i].textContent;
-			if(textContentLabel.toLowerCase().indexOf(filter) > -1) {
-				// @TODO - Migrate to active classes
-				this.lisItems[i].style.display = '';
+		this.lisItems.forEach(el => {
+			let label = el.textContent;
+			if (label.toLowerCase().indexOf(filter) > -1) {
+				el.style.display = '';
 			} else {
-				this.lisItems[i].style.display = 'none';
+				el.style.display = 'none';
 			}
-		}
+		});
 	}
 
 	resetSearch = () => {
 		this.searchWord = '';
-		for (let i = 0;i < this.lisItems.length; i++) {
-			if(this.lisItems[i].style.display === 'none') {
-				this.lisItems[i].style.display = '';
-			}
-		}
+		this.lisItems.forEach(el => {
+			if (el.style.display === 'none') el.style.display = '';
+		});
 	}
 
 	setSelectedItem = () => {
