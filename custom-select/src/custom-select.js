@@ -39,13 +39,14 @@ export class CustomSelect {
 		this.listElement.classList.toggle("hidden");
 
 		if (this.listElement.classList.contains('hidden')) {
-			document.removeEventListener('keydown', this.searchElement);
+			this.searchClean();
+			document.removeEventListener('keyup', this.searchElement);
 			document.removeEventListener('keydown', this.moveItem);
 			document.removeEventListener('click', this.detectOutsideClick);
 			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
 			this.listElement.removeEventListener('mouseout', this.removeColorListItemHandler);
 		} else {
-			document.addEventListener('keydown', this.searchElement);
+			document.addEventListener('keyup', this.searchElement);
 			document.addEventListener('keydown', this.moveItem);
 			document.addEventListener('click', this.detectOutsideClick);
 			this.listElement.addEventListener('mouseover', this.setColorListItemHandler)
@@ -54,15 +55,19 @@ export class CustomSelect {
 	}
 
 	searchElement = (e) => {
-		this.searchWord += e.key;
-		// if(e.target !== null) {
-		// 	this.searchElement();
-		// }
-		console.log(this.searchWord);
-		console.log(this.data.filter(e => e.label.toLowerCase().indexOf(this.searchWord.toLowerCase()) > -1));
+		if (e.keyCode >= 65 && e.keyCode <= 90) {
+			this.searchWord += e.key;
+		}
+
+		let filterData = this.data.filter(e => e.label.toLowerCase().indexOf(this.searchWord.toLowerCase()) > -1);
+		console.log(filterData);
 	}
 
-		setSelectedItem = () => {
+	searchClean = () => {
+		this.searchWord = '';
+	}
+
+	setSelectedItem = () => {
 		if (this.selectedOption) {
 			this.removeClass(this.selectedOption, 'selected');
 			this.removeClass(this.selectedOption, 'active');
@@ -138,7 +143,6 @@ export class CustomSelect {
 		this.label = newLabel;
 		this.inputElement.value = newValue;
 		this.labelElement.textContent = newLabel;
-		// this.showAndHideDiv();
 	}
 
 	createElementForJson = () => {
@@ -169,7 +173,7 @@ export class CustomSelect {
 		this.inputElement = this.container.querySelector('select');
 
 		let defaultValue = this.inputElement.selectedIndex,
-			  defaultLabel = this.inputElement.options[defaultValue].text;
+			defaultLabel = this.inputElement.options[defaultValue].text;
 
 		this.labelElement.textContent = defaultLabel;
 	}
