@@ -39,7 +39,7 @@ export class CustomSelect {
 		this.listElement.classList.toggle("hidden");
 
 		if (this.listElement.classList.contains('hidden')) {
-			this.searchClean();
+			this.resetSearch();
 			document.removeEventListener('keyup', this.searchElement);
 			document.removeEventListener('keydown', this.moveItem);
 			document.removeEventListener('click', this.detectOutsideClick);
@@ -54,15 +54,18 @@ export class CustomSelect {
 		}
 	}
 
+	// @TODO - Kakvo e debounce i ima li toi po4va u nas
 	searchElement = (e) => {
 		if (e.keyCode >= 65 && e.keyCode <= 90) {
 			this.searchWord += e.key;
 		}
 
 		let filter = this.searchWord.toLowerCase();
+		// @TODO - use the map or forEach methods. .map returns a new arr
 		for (let i = 0;i < this.lisItems.length; i++) {
 			let textContentLabel = this.lisItems[i].textContent;
 			if(textContentLabel.toLowerCase().indexOf(filter) > -1) {
+				// @TODO - Migrate to active classes
 				this.lisItems[i].style.display = '';
 			} else {
 				this.lisItems[i].style.display = 'none';
@@ -70,7 +73,7 @@ export class CustomSelect {
 		}
 	}
 
-	searchClean = () => {
+	resetSearch = () => {
 		this.searchWord = '';
 		for (let i = 0;i < this.lisItems.length; i++) {
 			if(this.lisItems[i].style.display === 'none') {
