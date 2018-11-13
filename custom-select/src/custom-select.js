@@ -59,12 +59,24 @@ export class CustomSelect {
 			this.searchWord += e.key;
 		}
 
-		let filterData = this.data.filter(e => e.label.toLowerCase().indexOf(this.searchWord.toLowerCase()) > -1);
-		console.log(filterData);
+		let filter = this.searchWord.toLowerCase();
+		for (let i = 0;i < this.lisItems.length; i++) {
+			let textContentLabel = this.lisItems[i].textContent;
+			if(textContentLabel.toLowerCase().indexOf(filter) > -1) {
+				this.lisItems[i].style.display = '';
+			} else {
+				this.lisItems[i].style.display = 'none';
+			}
+		}
 	}
 
 	searchClean = () => {
 		this.searchWord = '';
+		for (let i = 0;i < this.lisItems.length; i++) {
+			if(this.lisItems[i].style.display === 'none') {
+				this.lisItems[i].style.display = '';
+			}
+		}
 	}
 
 	setSelectedItem = () => {
