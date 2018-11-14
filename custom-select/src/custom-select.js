@@ -64,6 +64,7 @@ export class CustomSelect {
 		this.lisItems.forEach(el => {
 			let label = el.textContent;
 			if (label.toLowerCase().indexOf(filter) > -1) {
+				// @TODO - Migrate to active classes
 				el.style.display = '';
 			} else {
 				el.style.display = 'none';
