@@ -112,7 +112,7 @@ input[type="reset"] {
   border-top: none;
   background-color: white;
   z-index: 1;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .custom-select__list.hidden {

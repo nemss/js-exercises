@@ -25,7 +25,6 @@ export class CustomSelect {
 
 	initialEventListener = () => {
 		this.mainDiv.addEventListener('click', this.toggleList);
-		this.listElement.addEventListener('click', this.listItemClickHandler);
 	}
 
 	toggleList = () => {
@@ -37,18 +36,19 @@ export class CustomSelect {
 		}
 		this.container.classList.toggle("custom-select--active")
 		this.listElement.classList.toggle("hidden");
-
 		if (this.listElement.classList.contains('hidden')) {
 			this.resetSearch();
 			document.removeEventListener('keyup', this.searchElement);
 			document.removeEventListener('keydown', this.moveItem);
 			document.removeEventListener('click', this.detectOutsideClick);
+			this.listElement.removeEventListener('click', this.listItemClickHandler);
 			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
 			this.listElement.removeEventListener('mouseout', this.removeColorListItemHandler);
 		} else {
 			document.addEventListener('keyup', this.searchElement);
 			document.addEventListener('keydown', this.moveItem);
 			document.addEventListener('click', this.detectOutsideClick);
+			this.listElement.addEventListener('click', this.listItemClickHandler);
 			this.listElement.addEventListener('mouseover', this.setColorListItemHandler)
 			this.listElement.addEventListener('mouseout', this.removeColorListItemHandler);
 		}
@@ -63,10 +63,8 @@ export class CustomSelect {
 		let filter = this.searchWord.toLowerCase();
 		this.lisItems.forEach(el => {
 			let label = el.textContent;
-			if (label.toLowerCase().indexOf(filter) > -1) {
+			if (!label.toLowerCase().indexOf(filter) == 0) {
 				// @TODO - Migrate to active classes
-				el.style.display = '';
-			} else {
 				el.style.display = 'none';
 			}
 		});
@@ -92,6 +90,7 @@ export class CustomSelect {
 	}
 
 	moveItem = (e) => {
+
 		let keyName = e.key;
 		switch (keyName) {
 			case 'ArrowUp':
@@ -110,7 +109,10 @@ export class CustomSelect {
 				}
 				break;
 			case 'Enter':
-				this.changeInputValue(this.activeOption.innerHTML, this.activeOption.getAttribute('data-value'))
+				// Because when you click on the button to open the dropdown, it stays focused and the Enter case breaks;
+				e.preventDefault();
+				this.changeInputValue(this.activeOption.innerHTML, this.activeOption.getAttribute('data-value'));
+				this.toggleList();
 				break;
 			case 'Escape':
 				this.toggleList();
