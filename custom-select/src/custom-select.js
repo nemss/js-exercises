@@ -15,6 +15,7 @@ export class CustomSelect {
 	inputElement = null;
 	listElement = null;
 	lisItems = null;
+	arrowCounter = 1;
 	data = [];
 
 
@@ -87,6 +88,7 @@ export class CustomSelect {
 		this.activeOption = document.querySelector(this.selectedActiveOptionString());
 		this.setClass(this.selectedOption, 'active');
 		this.setClass(this.selectedOption, 'selected');
+		this.arrowCounter =  this.data.findIndex(e => e.label==this.selectedOption.textContent);
 	}
 
 	moveItem = (e) => {
@@ -94,18 +96,26 @@ export class CustomSelect {
 		let keyName = e.key;
 		switch (keyName) {
 			case 'ArrowUp':
+				e.preventDefault();
 				if (this.activeOption.previousElementSibling) {
 					this.setClass(this.activeOption, 'active');
 					this.removeClass(this.activeOption, 'active');
 					this.activeOption = this.activeOption.previousElementSibling;
 					this.setClass(this.activeOption, 'active');
+					this.arrowCounter = this.arrowCounter - 1;
+					this.fixScrolling();
+					console.log(this.arrowCounter);
 				}
 				break;
 			case 'ArrowDown':
+				e.preventDefault();
 				if (this.activeOption.nextElementSibling) {
 					this.removeClass(this.activeOption, 'active');
 					this.activeOption = this.activeOption.nextElementSibling;
 					this.setClass(this.activeOption, 'active');
+					this.arrowCounter = this.arrowCounter + 1;
+					this.fixScrolling();
+					console.log(this.arrowCounter);
 				}
 				break;
 			case 'Enter':
@@ -118,6 +128,11 @@ export class CustomSelect {
 				this.toggleList();
 				break;
 		}
+	}
+
+	fixScrolling = () => {
+		const liHeight = this.lisItems[this.arrowCounter].clientHeight;
+		this.listElement.scrollTop = liHeight * this.arrowCounter;
 	}
 
 	removeColorListItemHandler = (e) => {
