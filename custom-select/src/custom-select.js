@@ -63,18 +63,23 @@ export class CustomSelect {
 		let filter = this.searchWord.toLowerCase();
 		this.lisItems.forEach(el => {
 			let label = el.textContent;
-			if (!label.toLowerCase().indexOf(filter) == 0) {
+			if (label.toLowerCase().indexOf(filter) == 0) {
 				// @TODO - Migrate to active classes
-				el.style.display = 'none';
+				this.removeClass(this.activeOption, 'active');
+				this.setClass(el, 'active')
+				this.activeOption = el
+				return
 			}
 		});
 	}
-
+w
 	resetSearch = () => {
 		this.searchWord = '';
 		this.lisItems.forEach(el => {
-			if (el.style.display === 'none') el.style.display = '';
-		});
+			if (el.classList.contains('active')) {
+				this.removeClass(el, 'active')
+			}
+		})
 	}
 
 	setSelectedItem = () => {
