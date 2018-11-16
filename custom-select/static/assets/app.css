@@ -125,6 +125,11 @@ input[type="reset"] {
   list-style: none;
 }
 
+.custom-select__item:hover {
+  background: #434343;
+  color: white;
+}
+
 li.custom-select__item.active {
   background: #434343;
   color: white;

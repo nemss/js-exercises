@@ -15,7 +15,7 @@ export class CustomSelect {
 	inputElement = null;
 	listElement = null;
 	lisItems = null;
-	arrowCounter = 1;
+	arrowCounter = null;
 	data = [];
 
 
@@ -38,20 +38,19 @@ export class CustomSelect {
 		this.container.classList.toggle("custom-select--active")
 		this.listElement.classList.toggle("hidden");
 		if (this.listElement.classList.contains('hidden')) {
+			this.arrowCounter = null;
 			this.resetSearch();
 			document.removeEventListener('keyup', this.searchElement);
 			document.removeEventListener('keydown', this.moveItem);
 			document.removeEventListener('click', this.detectOutsideClick);
 			this.listElement.removeEventListener('click', this.listItemClickHandler);
 			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
-			this.listElement.removeEventListener('mouseout', this.removeColorListItemHandler);
 		} else {
 			document.addEventListener('keyup', this.searchElement);
 			document.addEventListener('keydown', this.moveItem);
 			document.addEventListener('click', this.detectOutsideClick);
 			this.listElement.addEventListener('click', this.listItemClickHandler);
 			this.listElement.addEventListener('mouseover', this.setColorListItemHandler)
-			this.listElement.addEventListener('mouseout', this.removeColorListItemHandler);
 		}
 	}
 
@@ -88,7 +87,7 @@ export class CustomSelect {
 		this.activeOption = document.querySelector(this.selectedActiveOptionString());
 		this.setClass(this.selectedOption, 'active');
 		this.setClass(this.selectedOption, 'selected');
-		this.arrowCounter =  this.data.findIndex(e => e.label==this.selectedOption.textContent);
+		this.arrowCounter = this.data.findIndex(e => e.label === this.selectedOption.textContent);
 	}
 
 	moveItem = (e) => {
@@ -104,7 +103,6 @@ export class CustomSelect {
 					this.setClass(this.activeOption, 'active');
 					this.arrowCounter = this.arrowCounter - 1;
 					this.fixScrolling();
-					console.log(this.arrowCounter);
 				}
 				break;
 			case 'ArrowDown':
@@ -115,7 +113,6 @@ export class CustomSelect {
 					this.setClass(this.activeOption, 'active');
 					this.arrowCounter = this.arrowCounter + 1;
 					this.fixScrolling();
-					console.log(this.arrowCounter);
 				}
 				break;
 			case 'Enter':
@@ -135,20 +132,12 @@ export class CustomSelect {
 		this.listElement.scrollTop = liHeight * this.arrowCounter;
 	}
 
-	removeColorListItemHandler = (e) => {
-		if (e.target !== this.selectedOption && e.relatedTarget.nodeName === 'LI') {
-			this.removeClass(e.target, 'active');
-		}
-		this.activeOption = e.target;
-	}
-
 	setColorListItemHandler = (e) => {
-		if (e.target !== this.selectedOption && this.activeOption !== e.target) {
-			this.setClass(e.target, 'active');
-			this.removeClass(this.activeOption, 'active');
-			this.removeClass(this.selectedOption, 'active');
-		} else {
-			this.setClass(e.target, 'active');
+		if (e.target.nodeName !== 'UL' && e.target !== this.selectedOption && this.activeOption !== e.target) {
+			this.removeClass(this.activeOption, 'active')
+			this.removeClass(this.selectedOption, 'active')
+			this.setClass(e.target, 'active')
+			this.activeOption = e.target
 		}
 	}
 
