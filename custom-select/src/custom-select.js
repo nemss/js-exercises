@@ -39,7 +39,7 @@ export class CustomSelect {
 		this.listElement.classList.toggle("hidden")
 		if (this.listElement.classList.contains('hidden')) {
 			this.arrowCounter = null
-			this.resetSearch()
+			//this.resetSearch()
 			document.removeEventListener('keyup', this.searchElement)
 			document.removeEventListener('keydown', this.moveItem)
 			document.removeEventListener('click', this.detectOutsideClick)
@@ -54,7 +54,6 @@ export class CustomSelect {
 		}
 	}
 
-	// @TODO - Kakvo e debounce i ima li toi po4va u nas
 	searchElement = (e) => {
 		if (e.keyCode >= 65 && e.keyCode <= 90) {
 			this.searchWord += e.key
@@ -64,19 +63,22 @@ export class CustomSelect {
 		this.lisItems.forEach(el => {
 			let label = el.textContent
 			if (label.toLowerCase().indexOf(filter) == 0) {
-				// @TODO - Migrate to active classes
 				this.removeClass(this.activeOption, 'active')
 				this.setClass(el, 'active')
 				this.activeOption = el
 				return
 			}
 		})
+
+		setTimeout(() => {
+			this.searchWord = ''
+		}, 1000);
 	}
 
 	resetSearch = () => {
 		this.searchWord = ''
 		this.lisItems.forEach(el => {
-			if (el.classList.contains('active')) {
+			if (el.classList.contains('active') && el.classList.contains('selected') !== false) {
 				this.removeClass(el, 'active')
 			}
 		})
@@ -85,14 +87,20 @@ export class CustomSelect {
 	setSelectedItem = () => {
 		if (this.selectedOption) {
 			this.removeClass(this.selectedOption, 'selected')
-			this.removeClass(this.selectedOption, 'active')
 		}
 
 		this.selectedOption = document.querySelector(this.selectedActiveOptionString())
-		this.activeOption = document.querySelector(this.selectedActiveOptionString())
-		this.setClass(this.selectedOption, 'active')
+		this.setActiveItem(this.selectedOption)
 		this.setClass(this.selectedOption, 'selected')
 		this.arrowCounter = this.data.findIndex(e => e.label === this.selectedOption.textContent)
+	}
+
+	setActiveItem = (element) => {
+		if (this.activeOption) {
+			this.removeClass(this.activeOption, 'active')
+		}
+		this.activeOption = element
+		this.setClass(this.activeOption, 'active')
 	}
 
 	moveItem = (e) => {
@@ -101,10 +109,7 @@ export class CustomSelect {
 			case 'ArrowUp':
 				e.preventDefault()
 				if (this.activeOption.previousElementSibling) {
-					this.setClass(this.activeOption, 'active')
-					this.removeClass(this.activeOption, 'active')
-					this.activeOption = this.activeOption.previousElementSibling
-					this.setClass(this.activeOption, 'active')
+					this.setActiveItem(this.activeOption.previousElementSibling);
 					this.arrowCounter = this.arrowCounter - 1
 					this.fixScrolling()
 				}
@@ -112,9 +117,7 @@ export class CustomSelect {
 			case 'ArrowDown':
 				e.preventDefault()
 				if (this.activeOption.nextElementSibling) {
-					this.removeClass(this.activeOption, 'active')
-					this.activeOption = this.activeOption.nextElementSibling
-					this.setClass(this.activeOption, 'active')
+					this.setActiveItem(this.activeOption.nextElementSibling)
 					this.arrowCounter = this.arrowCounter + 1
 					this.fixScrolling()
 				}
@@ -165,6 +168,7 @@ export class CustomSelect {
 		this.label = newLabel
 		this.inputElement.value = newValue
 		this.labelElement.textContent = newLabel
+		this.setSelectedItem()
 	}
 
 	createElementForJson = () => {
