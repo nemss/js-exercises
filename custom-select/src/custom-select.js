@@ -14,7 +14,7 @@ export class CustomSelect {
 	mainDiv = null
 	inputElement = null
 	listElement = null
-	lisItems = null
+	listItems = null
 	arrowCounter = null
 	data = []
 
@@ -39,13 +39,13 @@ export class CustomSelect {
 		this.listElement.classList.toggle("hidden")
 		if (this.listElement.classList.contains('hidden')) {
 			this.arrowCounter = null
-			//this.resetSearch()
 			document.removeEventListener('keyup', this.searchElement)
 			document.removeEventListener('keydown', this.moveItem)
 			document.removeEventListener('click', this.detectOutsideClick)
 			this.listElement.removeEventListener('click', this.listItemClickHandler)
 			this.listElement.removeEventListener('mouseover', this.setColorListItemHandler)
 		} else {
+			this.arrowCounter = this.data.findIndex(e => e.label === this.selectedOption.textContent)
 			document.addEventListener('keyup', this.searchElement)
 			document.addEventListener('keydown', this.moveItem)
 			document.addEventListener('click', this.detectOutsideClick)
@@ -57,27 +57,25 @@ export class CustomSelect {
 	searchElement = (e) => {
 		if (e.keyCode >= 65 && e.keyCode <= 90) {
 			this.searchWord += e.key
+
+			let filter = this.searchWord.toLowerCase()
+			this.listItems.forEach(el => {
+				let label = el.textContent
+				if (label.toLowerCase().indexOf(filter) == 0) {
+					this.setActiveItem(el)
+					return
+				}
+			})
+
+			setTimeout(() => {
+				this.searchWord = ''
+			}, 1000);
 		}
-
-		let filter = this.searchWord.toLowerCase()
-		this.lisItems.forEach(el => {
-			let label = el.textContent
-			if (label.toLowerCase().indexOf(filter) == 0) {
-				this.removeClass(this.activeOption, 'active')
-				this.setClass(el, 'active')
-				this.activeOption = el
-				return
-			}
-		})
-
-		setTimeout(() => {
-			this.searchWord = ''
-		}, 1000);
 	}
 
 	resetSearch = () => {
 		this.searchWord = ''
-		this.lisItems.forEach(el => {
+		this.listItems.forEach(el => {
 			if (el.classList.contains('active') && el.classList.contains('selected') !== false) {
 				this.removeClass(el, 'active')
 			}
@@ -92,7 +90,6 @@ export class CustomSelect {
 		this.selectedOption = document.querySelector(this.selectedActiveOptionString())
 		this.setActiveItem(this.selectedOption)
 		this.setClass(this.selectedOption, 'selected')
-		this.arrowCounter = this.data.findIndex(e => e.label === this.selectedOption.textContent)
 	}
 
 	setActiveItem = (element) => {
@@ -108,16 +105,18 @@ export class CustomSelect {
 		switch (keyName) {
 			case 'ArrowUp':
 				e.preventDefault()
-				if (this.activeOption.previousElementSibling) {
-					this.setActiveItem(this.activeOption.previousElementSibling);
+				let previousActiveOption = this.activeOption.previousElementSibling
+				if (previousActiveOption) {
+					this.setActiveItem(previousActiveOption)
 					this.arrowCounter = this.arrowCounter - 1
 					this.fixScrolling()
 				}
 				break
 			case 'ArrowDown':
 				e.preventDefault()
-				if (this.activeOption.nextElementSibling) {
-					this.setActiveItem(this.activeOption.nextElementSibling)
+				let nextActiveOption = this.activeOption.nextElementSibling
+				if (nextActiveOption) {
+					this.setActiveItem(nextActiveOption)
 					this.arrowCounter = this.arrowCounter + 1
 					this.fixScrolling()
 				}
@@ -135,16 +134,17 @@ export class CustomSelect {
 	}
 
 	fixScrolling = () => {
-		const liHeight = this.lisItems[this.arrowCounter].clientHeight
-		this.listElement.scrollTop = liHeight * this.arrowCounter
+		if(this.arrowCounter > 10) {
+			const liHeight = this.listItems[this.arrowCounter].clientHeight
+			this.listElement.scrollTop = liHeight * this.arrowCounter
+		}
+
 	}
 
 	setColorListItemHandler = (e) => {
-		if (e.target.nodeName !== 'UL' && e.target !== this.selectedOption && this.activeOption !== e.target) {
-			this.removeClass(this.activeOption, 'active')
+		if (e.target.nodeName !== 'UL' && this.activeOption !== e.target) {
 			this.removeClass(this.selectedOption, 'active')
-			this.setClass(e.target, 'active')
-			this.activeOption = e.target
+			this.setActiveItem(e.target);
 		}
 	}
 
@@ -207,7 +207,7 @@ export class CustomSelect {
 	defaultElements = () => {
 		this.labelElement = this.container.querySelector('span')
 		this.listElement = this.container.querySelector('ul')
-		this.lisItems = this.container.querySelectorAll('li')
+		this.listItems = this.container.querySelectorAll('li')
 		this.mainDiv = this.container.querySelector('div')
 	}
 
