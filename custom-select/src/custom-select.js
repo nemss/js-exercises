@@ -110,7 +110,7 @@ export class CustomSelect {
 				if (previousActiveOption) {
 					this.setActiveItem(previousActiveOption)
 					this.arrowCounter = this.arrowCounter - 1
-					this.fixScrolling()
+					this.fixScrolling(keyName)
 				}
 				break
 			case 'ArrowDown':
@@ -119,7 +119,7 @@ export class CustomSelect {
 				if (nextActiveOption) {
 					this.setActiveItem(nextActiveOption)
 					this.arrowCounter = this.arrowCounter + 1
-					this.fixScrolling()
+					this.fixScrolling(keyName)
 				}
 				break
 			case 'Enter':
@@ -134,10 +134,11 @@ export class CustomSelect {
 		}
 	}
 
-	fixScrolling = () => {
-			const liHeight = this.listItems[this.arrowCounter].clientHeight
-			this.listElement.scrollTop = liHeight * (this.arrowCounter - 8)
-			this.count++
+	fixScrolling = (direction) => {
+		let position = direction === 'ArrowDown' ? this.arrowCounter - 8 : this.arrowCounter - 2;
+		const liHeight = this.listItems[this.arrowCounter].clientHeight
+		this.listElement.scrollTop = liHeight * position
+
 	}
 
 	setColorListItemHandler = (e) => {
