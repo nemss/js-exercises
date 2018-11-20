@@ -16,6 +16,7 @@ export class CustomSelect {
 	listElement = null
 	listItems = null
 	arrowCounter = null
+	count = null
 	data = []
 
 
@@ -134,11 +135,9 @@ export class CustomSelect {
 	}
 
 	fixScrolling = () => {
-		if(this.arrowCounter > 10) {
 			const liHeight = this.listItems[this.arrowCounter].clientHeight
-			this.listElement.scrollTop = liHeight * this.arrowCounter
-		}
-
+			this.listElement.scrollTop = liHeight * (this.arrowCounter - 8)
+			this.count++
 	}
 
 	setColorListItemHandler = (e) => {
