@@ -16,7 +16,6 @@ export class CustomSelect {
 	listElement = null
 	listItems = null
 	arrowCounter = null
-	count = null
 	data = []
 
 
@@ -60,27 +59,22 @@ export class CustomSelect {
 			this.searchWord += e.key
 
 			let filter = this.searchWord.toLowerCase()
-			this.listItems.forEach(el => {
+			this.listItems.forEach((el, index) => {
 				let label = el.textContent
 				if (label.toLowerCase().indexOf(filter) == 0) {
 					this.setActiveItem(el)
+					this.arrowCounter = index
 					return
 				}
 			})
+
+			const liHeight = this.listItems[this.arrowCounter].clientHeight
+			this.listElement.scrollTop = liHeight * this.arrowCounter
 
 			setTimeout(() => {
 				this.searchWord = ''
 			}, 1000);
 		}
-	}
-
-	resetSearch = () => {
-		this.searchWord = ''
-		this.listItems.forEach(el => {
-			if (el.classList.contains('active') && el.classList.contains('selected') !== false) {
-				this.removeClass(el, 'active')
-			}
-		})
 	}
 
 	setSelectedItem = () => {
@@ -135,10 +129,29 @@ export class CustomSelect {
 	}
 
 	fixScrolling = (direction) => {
-		let position = direction === 'ArrowDown' ? this.arrowCounter - 8 : this.arrowCounter - 2;
-		const liHeight = this.listItems[this.arrowCounter].clientHeight
-		this.listElement.scrollTop = liHeight * position
+		const itemHeight = this.listItems[this.arrowCounter - 1].clientHeight,
+			viewportHeight = this.listElement.clientHeight,
+			viewportOffset = this.listElement.offsetTop,
+			visibleItems = Math.ceil(viewportHeight / itemHeight),
+			itemPosition = this.listItems[this.arrowCounter - 1].offsetTop,
+			nextItemPosition = this.listItems[this.arrowCounter].offsetTop,
+			totalHeight = this.listItems.length * itemHeight,
+			bottomBuffer = visibleItems + 2 * itemHeight,
+			topBuffer = visibleItems - 2 * itemHeight
 
+		if (direction === 'ArrowDown') {
+			if (viewportOffset !== totalHeight - viewportHeight) {
+				if (itemHeight + itemPosition > viewportHeight - bottomBuffer) {
+					let currentScroll = Math.round(this.listElement.scrollTop)
+					this.listElement.scrollTop = currentScroll + itemHeight
+				}
+			}
+		} else if(direction === 'ArrowUp'){
+			if (itemHeight + itemPosition <  viewportHeight + topBuffer) {
+				let currentScroll = Math.round(this.listElement.scrollTop)
+				this.listElement.scrollTop = currentScroll - itemHeight
+			}
+		}
 	}
 
 	setColorListItemHandler = (e) => {
